@@ -18,7 +18,7 @@ const router = express.Router();
 router.get('/', (req, res) => {
     const result = run();
     console.log(result);
-    res.send(result);
+    // res.send(result);
     res.send('Wahoo! restricted area, click to <a href="/logout">logout</a>');
 })
 
