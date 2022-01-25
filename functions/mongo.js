@@ -1,53 +1,91 @@
 const { MongoClient } = require('mongodb');
 const express = require('express');
 const serverless = require('serverless-http');
+const bodyParser = require('body-parser');
 
 const app = express();
 const router = express.Router();
 
-router.get('/', async (req, res) => {
-    const result = await run();
-    console.log(result);
-    res.send(result);
-    // res.send('Wahoo! restricted area, click to <a href="/logout">logout</a>');
-});
+app.use(express.static('dist'));
+app.use(bodyParser.json());
 
 const uri = "mongodb+srv://mimain:mimain.2022@mycluster1.ulsva.mongodb.net/myFirstDatabase?retryWrites=true&w=majority";
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
 
-async function run() {
+const connect = async (callback) => {
     try {
-        // Connect the client to the server
         await client.connect();
-        // Establish and verify connection
-        await client.db("admin").command({ ping: 1 });
-        console.log("Connected successfully to server");
-
-        const database = client.db("basa1");
-        const movies = database.collection("collect1");
-
-        const doc = {
-            title: "Record of a Shriveled Datum",
-            content: "No bytes, no problem. Just insert a document, in MongoDB",
-        }
-
-        // const result = await movies.insertOne(doc);
-        const result = await movies.find().toArray();
-        console.log(result);
-        // alert('Ayoo');
-        // console.log(`A document was inserted with the _id: ${result.insertedId}`);
-        return result;
-        // console.log(result);
+        await callback();
+        console.log('Connected successfully');
     } catch (e) {
-        return e;
-    } finally {
-        // Ensures that the client will close when you finish/error
-        await client.close();
+        console.error(e);
     }
+}
+
+router.post('/register', async (req, res) => {
+    let result = null;
+    let error = null;
+    await connect(async () => {
+        try {
+            result = await createUser(req.body);
+        } catch (e) {
+            if (e.code === 11000) {
+                error = 'Email is already used'
+            } else {
+                error = 'There is a problem'
+            }
+        }
+    });
+    res.send({
+        ok: !error,
+        message: error || 'Good',
+        res: !error ? result.insertedId : ''
+    });
+});
+
+router.post('/login', async (req, res) => {
+    let error = null;
+    let user = null;
+    let right = false;
+    let message = '';
+    await connect(async () => {
+        try {
+            user = await getUser(req.body.email);
+            if (user) {
+                message = 'Wrong Password';
+                if (user.password === req.body.password) {
+                    right = true;
+                }
+            }
+        } catch (e) {
+            error = e;
+        }
+        res.send({
+            ok: !error,
+            message: message || error,
+            res: right,
+        });
+    });
+
+});
+
+const getDatabasesList = async () => {
+    const dbList = await client.db().admin().listDatabases();
+    dbList.databases.forEach((db) => {
+        console.log(`DataBase: ${db.name}`);
+    });
+}
+
+const createUser = async (user) => {
+    return await client.db('basa1').collection('collect1').insertOne(user);
+}
+
+const getUser = async (email) => {
+    return await client.db('basa1').collection('collect1').findOne({
+        email: email
+    });
 }
 
 app.use('/.netlify/functions/mongo', router);
 
 module.exports.handler = serverless(app);
-
-// run();np
