@@ -27,12 +27,12 @@ const sendRequest = async (url, data) => {
 }
 
 const register = async (userData) => {
-	let response = await sendRequest('/api/user/register', userData);
+	let response = await sendRequest('/.netlify/functions/mongo/register', userData);
 	console.log(response.json());
 }
 
 const login = async (userData) => {
-	let response = await sendRequest('/api/user/login', userData);
+	let response = await sendRequest('/.netlify/functions/mongo/login', userData);
 	console.log(await response.json());
 }
 
