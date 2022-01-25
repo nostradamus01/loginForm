@@ -13,14 +13,6 @@ loginHeaderBtn.addEventListener('click', () => {
 	mainContainer.classList.add('login-active');
 });
 
-const getRegistrationData = (data) => {
-	let ob = {};
-	for (let [key, value] of data.entries()) {
-		ob[key] = value;
-	}
-	return ob;
-}
-
 const getFormData = (form) => {
 	let ob = {};
 	let data = new FormData(form);
@@ -54,20 +46,37 @@ const registrationForm = document.querySelector('#registrationForm');
 loginForm.addEventListener('submit', async (e) => {
 	e.preventDefault();
 	let res = await login(getFormData(e.target));
-	console.log(res);
+	loginMsgBox.innerHTML = '';
+	if (res.ok) {
+		if (!res.login) {
+			e.target.password.reset();
+			loginMsgBox.innerHTML = res.message;
+		} else {
+			window.location.replace('https://google.com');
+		}
+	} else {
+		alert('We have a big problem');
+	}
 });
 
 registrationForm.addEventListener('submit', async (e) => {
 	e.preventDefault();
 	let formData = getFormData(e.target);
+	signupMsgBox.innerHTML = '';
 	if (formData.password === formData.repassword) {
-		delete formData.repassword;
-		signupMsgBox.innerHTML = ``;
+		if (formData.password.length >= 8 && formData.password.length <= 32) {
+			delete formData.repassword;
+			let res = await register(formData);
+			if (res.ok) {
+				e.target.reset();
+				signupMsgBox.innerHTML = 'You have successfully registered';
+			} else {
+				alert('We have a big problem');
+			}
+		} else {
+			signupMsgBox.innerHTML = 'Password must contain 8-32 symbols';
+		}
 	} else {
-		signupMsgBox.innerHTML = `Password mismatch`;
+		signupMsgBox.innerHTML = 'Password mismatch';
 	}
-	console.log(formData);
-	// register().then(() => {
-	// 	console.log('register done');
-	// });
 });
