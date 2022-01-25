@@ -1,26 +1,19 @@
 const { MongoClient } = require('mongodb');
 const express = require('express');
 const serverless = require('serverless-http');
-const uri = "mongodb+srv://mimain:mimain.2022@mycluster1.ulsva.mongodb.net/myFirstDatabase?retryWrites=true&w=majority";
-const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
-// console.log("hello");
-// client.connect(err => {
-//     const collection = client.db("test").collection("devices");
-//     console.log(err);
-//     console.log('helo2');
-//     // perform actions on the collection object
-//     client.close();
-// });
 
 const app = express();
 const router = express.Router();
 
-router.get('/', (req, res) => {
-    const result = run();
+router.get('/', async (req, res) => {
+    const result = await run();
     console.log(result);
-    // res.send(result);
-    res.send('Wahoo! restricted area, click to <a href="/logout">logout</a>');
-})
+    res.send(result);
+    // res.send('Wahoo! restricted area, click to <a href="/logout">logout</a>');
+});
+
+const uri = "mongodb+srv://mimain:mimain.2022@mycluster1.ulsva.mongodb.net/myFirstDatabase?retryWrites=true&w=majority";
+const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
 
 async function run() {
     try {
@@ -46,7 +39,7 @@ async function run() {
         return result;
         // console.log(result);
     } catch (e) {
-        console.log(e);
+        return e;
     } finally {
         // Ensures that the client will close when you finish/error
         await client.close();
