@@ -31,7 +31,7 @@ router.post('/register', async (req, res) => {
             result = await createUser(req.body);
         } catch (e) {
             error = e;
-            if (e.code === 11000) {
+            if (e && e.code === 11000) {
                 message = 'Email is already used'
             } else {
                 message = 'There is a problem. Try again later'
@@ -40,7 +40,7 @@ router.post('/register', async (req, res) => {
     });
     res.send({
         ok: !error,
-        message: message || error.code
+        message: message || error
     });
 });
 
@@ -67,7 +67,7 @@ router.post('/login', async (req, res) => {
         }
         res.send({
             ok: !error,
-            message: message || error.code,
+            message: message || error,
             login: login
         });
     });

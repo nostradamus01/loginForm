@@ -49,7 +49,7 @@ loginForm.addEventListener('submit', async (e) => {
 	loginMsgBox.innerHTML = '';
 	if (res.ok) {
 		if (!res.login) {
-			e.target.password.reset();
+			e.target.password.value = '';
 			loginMsgBox.innerHTML = res.message;
 		} else {
 			window.location.replace('https://google.com');
