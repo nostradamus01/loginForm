@@ -71,6 +71,7 @@ button:hover {
 }
 
 .login {
+    position: relative;
     height: 460px;
     background: #eee;
     border-radius: 60% / 10%;
@@ -93,4 +94,12 @@ button:hover {
 
 .main.login-active .signup .label {
 	transform: scale(0.6);
+}
+
+.message-box {
+    position: absolute;
+    top: 50px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: red;
 }
