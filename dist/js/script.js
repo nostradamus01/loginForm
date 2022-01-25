@@ -46,6 +46,7 @@ const registrationForm = document.querySelector('#registrationForm');
 loginForm.addEventListener('submit', async (e) => {
 	e.preventDefault();
 	let res = await login(getFormData(e.target));
+	res = await res.json();
 	loginMsgBox.innerHTML = '';
 	if (res.ok) {
 		if (!res.login) {
@@ -67,6 +68,7 @@ registrationForm.addEventListener('submit', async (e) => {
 		if (formData.password.length >= 8 && formData.password.length <= 32) {
 			delete formData.repassword;
 			let res = await register(formData);
+			res = await res.json();
 			if (res.ok) {
 				e.target.reset();
 				signupMsgBox.innerHTML = 'You have successfully registered';
