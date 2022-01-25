@@ -29,9 +29,13 @@ router.post('/register', async (req, res) => {
     let register = false;
     let message = null;
     await connect(async () => {
-        req.body.password = passwordHash.generate(req.body.password);
+        let data = {
+            name: req.body.name,
+            email: req.body.email,
+            password: passwordHash.generate(req.body.password)
+        }
         try {
-            result = await createUser(req.body);
+            result = await createUser(data);
             register = true;
         } catch (e) {
             if (e && e.code === 11000) {

@@ -53,7 +53,7 @@ loginForm.addEventListener('submit', async (e) => {
 			e.target.password.value = '';
 			loginMsgBox.innerHTML = res.message;
 		} else {
-			window.location.assign('https://google.com');
+			window.location.assign('https://ed-night.github.io/salute/');
 		}
 	} else {
 		alert('We have a big problem');
