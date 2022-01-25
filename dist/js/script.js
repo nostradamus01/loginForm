@@ -69,11 +69,11 @@ registrationForm.addEventListener('submit', async (e) => {
 			delete formData.repassword;
 			let res = await register(formData);
 			res = await res.json();
-			if (res.ok) {
+			if (res.register) {
 				e.target.reset();
 				signupMsgBox.innerHTML = 'You have successfully registered';
 			} else {
-				alert('We have a big problem');
+				signupMsgBox.innerHTML = res.message;
 			}
 		} else {
 			signupMsgBox.innerHTML = 'Password must contain 8-32 symbols';

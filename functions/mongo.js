@@ -25,12 +25,13 @@ const connect = async (callback) => {
 router.post('/register', async (req, res) => {
     let result = null;
     let error = null;
+    let register = false;
     let message = null;
     await connect(async () => {
         try {
             result = await createUser(req.body);
+            register = true;
         } catch (e) {
-            error = e;
             if (e && e.code === 11000) {
                 message = 'Email is already used'
             } else {
@@ -39,8 +40,8 @@ router.post('/register', async (req, res) => {
         }
     });
     res.send({
-        ok: !error,
-        message: message || error
+        message: message,
+        register: register,
     });
 });
 
@@ -55,7 +56,6 @@ router.post('/login', async (req, res) => {
             if (user) {
                 if (user.password === req.body.password) {
                     login = true;
-                    message = 'Correct'
                 } else {
                     message = 'Password is wrong';
                 }
