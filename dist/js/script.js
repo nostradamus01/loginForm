@@ -1,15 +1,18 @@
-document.querySelector('.img-btn').addEventListener('click', function()
-	{
-		document.querySelector('.cont').classList.toggle('s-signup')
-	}
-);
+const mainContainer = document.querySelector('.main');
+const signUpHeaderBtn = document.querySelector('.signup-header');
+const loginHeaderBtn = document.querySelector('.login-header');
 
-const getFormData = (form, deleteKey) => {
+signUpHeaderBtn.addEventListener('click', () => {
+	mainContainer.classList.remove('login-active');
+});
+
+loginHeaderBtn.addEventListener('click', () => {
+	mainContainer.classList.add('login-active');
+});
+
+const getFormData = (form) => {
 	let ob = {};
 	let data = new FormData(form);
-	if (deleteKey) {
-		data.delete(deleteKey);
-	}
 	for(let pair of data.entries()) {
 		ob[pair[0]] = pair[1];
 	}
@@ -27,13 +30,13 @@ const sendRequest = async (url, data) => {
 }
 
 const register = async (userData) => {
-	let response = await sendRequest('/.netlify/functions/mongo/register', userData);
-	console.log(response.json());
+	let response = await sendRequest('/api/user/register', userData);
+	console.log(response);
 }
 
 const login = async (userData) => {
-	let response = await sendRequest('/.netlify/functions/mongo/login', userData);
-	console.log(await response.json());
+	let response = await sendRequest('/api/user/login', userData);
+	console.log(response);
 }
 
 const loginForm = document.querySelector('#loginForm');
@@ -48,7 +51,7 @@ loginForm.addEventListener('submit', (e) => {
 
 registrationForm.addEventListener('submit', (e) => {
 	e.preventDefault();
-	register(getFormData(e.target, 'repassword')).then(() => {
+	register(getFormData(e.target)).then(() => {
 		console.log('register done');
 	});
 });
