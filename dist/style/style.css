@@ -97,6 +97,7 @@ button:hover {
 }
 
 .message-box {
+    box-sizing: border-box;
     position: absolute;
     top: 50px;
     width: 100%;

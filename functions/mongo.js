@@ -2,6 +2,7 @@ const { MongoClient } = require('mongodb');
 const express = require('express');
 const serverless = require('serverless-http');
 const bodyParser = require('body-parser');
+const passwordHash = require('password-hash');
 
 const app = express();
 const router = express.Router();
@@ -28,6 +29,7 @@ router.post('/register', async (req, res) => {
     let register = false;
     let message = null;
     await connect(async () => {
+        req.body.password = passwordHash.generate(req.body.password);
         try {
             result = await createUser(req.body);
             register = true;
@@ -54,7 +56,7 @@ router.post('/login', async (req, res) => {
         try {
             user = await getUser(req.body.email);
             if (user) {
-                if (user.password === req.body.password) {
+                if (passwordHash.verify(req.body.password, user.password)) {
                     login = true;
                 } else {
                     message = 'Password is wrong';

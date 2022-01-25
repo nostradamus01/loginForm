@@ -53,7 +53,7 @@ loginForm.addEventListener('submit', async (e) => {
 			e.target.password.value = '';
 			loginMsgBox.innerHTML = res.message;
 		} else {
-			window.location.replace('https://google.com');
+			window.location.assign('https://google.com');
 		}
 	} else {
 		alert('We have a big problem');
